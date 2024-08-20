@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: machine
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root1234
+    ports:
+      - "3306:3306"
+    networks:
+      - my_network
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi_container
+    ports:
+      - "8080:8000"  # Mapea el puerto 8080 del host al puerto 8000 del contenedor
+    depends_on:
+      - mysql
+    networks:
+      - my_network
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:root1234@mysql/machine
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
