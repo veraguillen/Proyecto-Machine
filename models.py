@@ -81,7 +81,7 @@ class Actores(Base):
 
 
 # Configura la URL de conexión
-DATABASE_URL = 'mysql+pymysql://root:root1234@mysql_container:3306/machine'
+DATABASE_URL = 'mysql+pymysql://root:root1234@mysql:3306/machine'
 # Crea el motor de base de datos
 engine = create_engine(DATABASE_URL, echo=True)
 

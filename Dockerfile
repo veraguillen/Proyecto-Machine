@@ -14,7 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia los archivos de la aplicación al contenedor
 COPY app /app
-
+# Copia los archivos de joblib al contenedor
+COPY joblib /app/joblib
 # Expone el puerto 8000 en el contenedor
 EXPOSE 8000
 

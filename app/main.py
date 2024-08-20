@@ -11,18 +11,23 @@ import os
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from pathlib import Path
-# Crear la aplicación FastAPI
-from models import SessionLocal, Movies
+import mysql.connector
+from mysql.connector import Error
+from models import SessionLocal, Movies, Genres
+from database import get_db
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 app = FastAPI()
 
-from models import SessionLocal, Movies, Genres
-from database import get_db  # Ajusta esta importación según la estructura de tu proyecto
+@app.get("/")
+def read_root():
+    return {"message": "Hello World"}
 
+
+  # Ajusta esta importación según la estructura de tu proyecto
 BASE_PATH = "//app//joblib"
 VECTORIZER_PATH = os.path.join(BASE_PATH, "vectorizer.pkl")
 TFIDF_MATRIX_PATH = os.path.join(BASE_PATH, "tfidf_matrix.pkl")
-
 
 def load_vectorizer():
     if os.path.exists(VECTORIZER_PATH):
@@ -43,18 +48,30 @@ except Exception as e:
     print(f"Error al cargar los archivos: {e}")
 
 
-# Configuración de la base de datos MySQL
-DATABASE_URL = "mysql+pymysql://root:root1234@mysql_container/machine"
-engine = create_engine(DATABASE_URL, echo=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Crear una instancia de la base de datos para su uso
+# Configuración de la URL de la base de datos para MySQL
+DATABASE_URL = "mysql+pymysql://root:root1234@mysql:3306/machine"
+# Crear el motor de la base de datos
+engine = create_engine(DATABASE_URL)
+# Crear una sesión local
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Crear una base declarativa
+Base = declarative_base()
+# Función para crear las tablas en la base de datos
+def create_db():
+    Base.metadata.create_all(bind=engine)
+# Función para obtener una sesión de base de datos
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+# Ejecutar la creación de tablas si el archivo es ejecutado directamente
+if __name__ == "__main__":
+    create_db()
+
+
 
 
 
@@ -384,4 +401,5 @@ async def get_recommendations(query: MovieQuery, db: Session = Depends(get_db)):
 
 # Iniciar el servidor Uvicorn si se ejecuta el script directamente
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
