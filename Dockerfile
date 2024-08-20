@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia los archivos de la aplicación al contenedor
-COPY . .
+COPY ./app /app/
 
 # Expone el puerto 8000 en el contenedor
 EXPOSE 8000
