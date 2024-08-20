@@ -12,10 +12,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from pathlib import Path
 # Crear la aplicación FastAPI
+from models.models import SessionLocal, Movies
 
 app = FastAPI()
 
-from models import SessionLocal, Movies
+from models import SessionLocal, Movies, Genres
 from database import get_db  # Ajusta esta importación según la estructura de tu proyecto
 
 BASE_PATH = "//app//joblib"
@@ -206,8 +207,8 @@ def score_titulo(titulo_de_la_filmación: str = Query(..., description="Título 
 
 
 
-from models import actor_movie_association
-from models import Actores
+from models.models import  actor_movie_association
+from models.models import Actores
 @app.get("/get_actor/", tags=["Información de Actor"])
 def get_actor(nombre_actor: str = Query(..., description="Nombre del actor"), db: Session = Depends(get_db)):
     nombre_actor = nombre_actor.lower().strip()
@@ -258,7 +259,8 @@ def get_actor(nombre_actor: str = Query(..., description="Nombre del actor"), db
 
 
 
-from models import Directores
+from models.models import Directores
+
 @app.get("/get_director/", tags=["Información de Director"])
 def get_director(nombre_director: str = Query(..., description="Nombre del director"), db: Session = Depends(get_db)):
     nombre_director = nombre_director.lower().strip()
